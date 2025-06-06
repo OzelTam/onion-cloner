@@ -1,10 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
 import os
+from utils import extract_internal_links, is_valid_link
 
 
 port = input("Socks listener port: ") # Port that Tor Socks listener working on
-direactory = input("Please specify dirlectory: ") # Directory to dump website contents
+directory = input("Please specify dirlectory: ") # Directory to dump website contents
 
 
 proxies = {
@@ -15,9 +16,9 @@ proxies = {
 
 def create_file(file,code):
     try:
-        if not os.path.exists(direactory):
-            os.mkdir(direactory) #Creates folder if not exists
-        file = direactory + "\\" + file #points file to dir.
+        if not os.path.exists(directory):
+            os.mkdir(directory) #Creates folder if not exists
+        file = directory + "\\" + file #points file to dir.
         f = open(file, "w") #open file write mode
         f.write(code) 
         f.close()
@@ -73,7 +74,8 @@ def get_images(html,link):
 def download_image(file, link):
     r = requests.get(link, stream=True, proxies=proxies)
     if r.status_code == 200:
-        with open( direactory + "\\" + file, 'wb') as f:
+        os.makedirs(os.path.dirname(directory + "\\" + file), exist_ok=True)
+        with open(directory + "\\" + file, 'wb') as f:
             for chunk in r.iter_content(1024):
                 f.write(chunk)
 
